@@ -1,0 +1,181 @@
+SELECT COUNT(DISTINCT rating), COUNT(rating), rating
+FROM film
+GROUP BY rating;
+
+
+SELECT COUNT(DISTINCT(rating))
+FROM film;
+
+
+SELECT rating
+FROM (
+	SELECT rating, COUNT(rating) y   
+	FROM film
+	GROUP BY rating
+	 ) AS x
+WHERE y = (SELECT MAX(y)
+FROM (
+	SELECT rating, COUNT(rating) y   
+	FROM film
+	GROUP BY rating
+	 ) AS x);
+	 
+
+SELECT *
+FROM film_actor;
+-- Inner Join on the Actor and Film_Actor Table
+SELECT actor.actor_id, first_name, last_name, film_id
+FROM film_actor
+INNER JOIN actor
+ON actor.actor_id = film_actor.actor_id;
+-- LEFT JOIN on the ACTOR Table and Film_ Table
+
+SELECT actor.actor_id, first_name, last_name, film_id
+FROM film_actor
+LEFT JOIN actor
+ON actor.actor_id = film_actor.actor_id
+WHERE first_name IS NULL AND last_name IS NULL;
+
+SELECT *
+FROM country;
+
+-- JOin that willl produce info about customers
+-- from the country of Angola
+
+SELECT customer.first_name, customer.last_name, customer.email, country
+FROM customer
+FULL JOIN address
+ON customer.address_id = address.address_id
+FULL JOIN city
+ON address.city_id = city.city_id
+FULL JOIN country 
+ON city.country_id = country.country_id
+WHERE country = 'Angola';
+
+-- Right Join to find out the amount of staff member
+SELECT COUNT(staff_id), store.store_id
+FROM staff
+RIGHT JOIN store
+ON staff.store_id = store.store_id
+GROUP BY store.store_id;
+
+SELECT *
+FROM staff;
+
+SELECT SUM(amount), staff.first_name
+FROM payment
+FULL JOIN staff
+ON payment.staff_id = staff.staff_id
+GROUP BY staff.first_name;
+
+SELECT *
+FROM actor;
+
+
+SELECT *
+FROM film_actor;
+
+-- FROM language to film to actors - count langauge find out how many each acotr speaks
+
+SELECT COUNT(DISTINCT language), actor.last_name, actor.first_name
+FROM language
+INNER JOIN film
+ON language.language_id = film.language_id
+INNER JOIN film_actor
+ON film.film_id = film_actor.film_id
+INNER JOIN actor
+ON film_actor.actor_id = actor.actor_id
+GROUP BY actor.last_name, actor.first_name;
+
+-- subquery section
+
+--Two seperate suqeries that we can put together
+-- Find a customer_id that has an amount payment of greater than 175 in total
+
+SELECT customer_id 
+FROM payment
+GROUP BY customer_id
+HAVING SUM(amount) > 175
+ORDER BY SUM(amount) DESC;
+
+--SEcond query
+--FIND ALL CUSTOMER DATA
+
+SELECT *
+FROM customer;
+
+--SubQuery to find the 6 customers that have
+-- a total amount paid greater than 175
+
+SELECT *
+FROM customer
+WHERE customer_id IN(
+	SELECT customer_id 
+	FROM payment
+	GROUP BY customer_id
+	HAVING SUM(amount) > 175
+	ORDER BY SUM(amount) DESC
+);
+
+-- BASIC SUBQUERY EXAMPLE 2
+-- FIND ALL FILMS WITH THE LANGUAGE 'Englishl'
+
+SELECT *
+FROM film
+WHERE language_id IN (
+	SELECT language_id
+	FROM language
+	WHERE name = 'English'
+);
+
+-- What film has the most actors film_actor table + film id
+SELECT *
+FROM film_actor
+
+ 
+SELECT *
+FROM film
+WHERE
+
+SELECT title
+FROM film
+WHERE film_id IN(
+	SELECT film_id 
+	FROM film_actor
+	GROUP BY film_id 
+	ORDER BY COUNT(*) DESC
+	)
+
+SELECT title, film_id
+FROM film
+WHERE film_id IN(
+	SELECT film_id
+	FROM film_actor
+	GROUP BY film_id
+	ORDER BY COUNT(*) DESC
+	LIMIT 1
+);
+
+
+
+SELECT film.title, film.film_id, COUNT(*)
+FROM film_actor
+lEFT JOIN film on film.film_id = film_actor.film_id
+GROUP BY film.film_id, film.title
+ORDER BY COUNT(*) DESC
+LIMIT 10;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 

@@ -1,0 +1,81 @@
+-- List all customers who live in Texas
+
+SELECT first_name, last_name, district
+FROM customer
+FULL JOIN address
+ON customer.address_id = address.address_id
+WHERE district = 'Texas';
+
+-- Get all payments above 6.99 with the Customers's Full name
+
+
+SELECT first_name, last_name, amount
+FROM customer
+FULL JOIN payment
+ON customer.customer_id = payment.customer_id
+WHERE amount > 6.99;
+
+-- Show all customers names who have made payments over 175$
+
+SELECT first_name, last_name
+FROM customer
+WHERE customer_id IN(
+	SELECT customer_id
+	FROM payment
+	GROUP BY customer_id
+	HAVING SUM(AMOUNT) > 175);
+
+-- List all customers that live in Nepal (use tthe city table)
+
+SELECT first_name, last_name, country
+FROM customer
+FULL JOIN address
+ON customer.address_id = address.address_id
+FULL JOIN city
+ON address.city_id = city.city_id
+FULL JOIN country
+ON city.country_id = country.country_id
+WHERE country = 'Nepal';
+
+-- Which staff member had the most transactions
+
+SELECT first_name, last_name
+FROM staff
+WHERE staff_id IN(
+	SELECT staff_id
+	FROM payment
+	GROUP BY staff_id
+	ORDER BY COUNT(staff_id) DESC
+	LIMIT 1
+);
+
+-- How many movies of each rating are there?
+
+SELECT COUNT(film_id), rating
+FROM film
+GROUP BY rating
+ORDER BY COUNT(film_id) DESC;
+
+
+-- Show all customers who have made a single payment above 6.99
+
+SELECT first_name, last_name
+FROM customer
+WHERE customer_id IN(
+	SELECT customer_id
+	FROM payment
+	WHERE amount > 6.99
+	GROUP BY customer_id
+	HAVING COUNT(customer_id) = 1
+)
+ORDER BY last_name
+
+
+-- How many free rentals did our stores give away?
+
+SELECT COUNT(amount)
+FROM payment
+WHERE amount = 0
+
+
+
